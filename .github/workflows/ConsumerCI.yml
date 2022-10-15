@@ -5,12 +5,12 @@ on:
   push:
     paths:
       - 'consumer-react/**'
-      - './github/workflows/ConsumerCI.yml'
+      - '.github/workflows/ConsumerCI.yml'
   pull_request:
     branches: ['main']
     paths:
       - 'consumer-react/**'
-      - './github/workflows/ConsumerCI.yml'
+      - '.github/workflows/ConsumerCI.yml'
 
 env:
   version: ${{ github.sha }}-consumer-react

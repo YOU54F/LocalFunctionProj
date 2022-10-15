@@ -5,12 +5,12 @@ on:
   push:
     paths:
       - 'LocalFunctionProj/**'
-      - './github/workflows/dotnet.yml'
+      - '.github/workflows/dotnet.yml'
   pull_request:
     branches: ['main']
     paths:
       - 'LocalFunctionProj/**'
-      - './github/workflows/dotnet.yml'
+      - '.github/workflows/dotnet.yml'
 
 env:
   oas_file: oas/openapi.yaml
