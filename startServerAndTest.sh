@@ -23,6 +23,10 @@ stop_server() {
 
 start_server
 
-./wait-for $WAIT_FOR -- ./launchReadyAPITestRunner.sh
+./wait-for $WAIT_FOR --timeout 60 -- ./launchReadyAPITestRunner.sh 
+
+rc=$?
 
 stop_server
+
+exit rc
