@@ -75,6 +75,7 @@ jobs:
           enable-pull-request-comment: false
           enable-commit-comment: true
           overwrites-pull-request-comment: true
+          netlify-config-path: ./netlify.toml
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -86,7 +87,7 @@ jobs:
 
   deploy-to-production:
     if: github.ref == 'refs/heads/main'
-    needs: [can-i-deploy-to-production, deploy-to-test]
+    needs: [can-i-deploy-to-production]
     runs-on: ubuntu-latest
     env:
       application_name: consumer-react
