@@ -2,51 +2,51 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   workflow_dispatch:
 
 env:
   oas_file: oas/openapi.yaml
   results_file: LocalFunctionProjTest/report.xml
-  application_name: SmartBearCoin-Payee-Provider
+  application_name: LocalFunctionProj
   PACT_BROKER_BASE_URL: https://saflow.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-  
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    - name: Install core tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install azure-functions-core-tools-4
-    - name: Test
-      run: chmod ugo+rwx LocalFunctionProjTest && ./startServerAndTest.sh
-      env:
-        SLM_API_KEY: ${{ secrets.SLM_API_KEY }}      
-    - name: get version of OAS
-      run: |
-        sudo snap install yq && 
-        OAS_VERSION=$(yq '.info.version' oas/openapi.yaml)
-        echo "OAS_VERSION=${OAS_VERSION}" >> $GITHUB_ENV 
-        UNIQUE_VERSION=${OAS_VERSION}-${{ github.sha }}-service
-        echo "version=${UNIQUE_VERSION}" >> $GITHUB_ENV
-    - uses: pactflow/actions/publish-provider-contract@v1.0.0
-      if: success()
-    - uses: pactflow/actions/publish-provider-contract@v1.0.0
-      if: failure()
-      env:
-        EXIT_CODE: 1
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Install core tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install azure-functions-core-tools-4
+      - name: Test
+        run: chmod ugo+rwx LocalFunctionProjTest && ./startServerAndTest.sh
+        env:
+          SLM_API_KEY: ${{ secrets.SLM_API_KEY }}
+      - name: get version of OAS
+        run: |
+          sudo snap install yq && 
+          OAS_VERSION=$(yq '.info.version' oas/openapi.yaml)
+          echo "OAS_VERSION=${OAS_VERSION}" >> $GITHUB_ENV 
+          UNIQUE_VERSION=${OAS_VERSION}-${{ github.sha }}-service
+          echo "version=${UNIQUE_VERSION}" >> $GITHUB_ENV
+      - uses: pactflow/actions/publish-provider-contract@v1.0.0
+        if: success()
+      - uses: pactflow/actions/publish-provider-contract@v1.0.0
+        if: failure()
+        env:
+          EXIT_CODE: 1
     outputs:
       version: ${{ env.version }}
-          
+
   can-i-deploy-test:
     needs: test
     runs-on: ubuntu-latest
@@ -58,7 +58,6 @@ jobs:
         env:
           to_environment: ${{ env.deploy_target }}
           version: ${{ needs.test.outputs.version }}
-
 
   deploy-test:
     needs: [test, can-i-deploy-test]
@@ -72,7 +71,7 @@ jobs:
         env:
           environment: ${{ env.deployed_env }}
           version: ${{ needs.test.outputs.version }}
-          
+
   can-i-deploy-production:
     needs: [test, can-i-deploy-test, deploy-test]
     runs-on: ubuntu-latest
@@ -84,7 +83,6 @@ jobs:
         env:
           to_environment: ${{ env.deploy_target }}
           version: ${{ needs.test.outputs.version }}
-
 
   deploy-production:
     needs: [test, can-i-deploy-production]
