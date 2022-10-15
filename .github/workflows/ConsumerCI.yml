@@ -73,8 +73,6 @@ jobs:
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: './consumer-react/build'
-          production-branch: main
-          production-deploy: false
           alias: ${{ env.deploy_target }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy from GitHub Actions'
