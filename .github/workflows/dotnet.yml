@@ -92,9 +92,9 @@ jobs:
     env:
       deployed_env: production
     steps:
-      - name: record-deployment ${{ env.application_name }} to ${{ env.production }}
+      - name: record-deployment ${{ env.application_name }} to ${{ env.deployed_env }}
         if: success() && github.ref == 'refs/heads/main'
         uses: pactflow/actions/record-deployment@v1.0.1
         env:
-          environment: ${{ env.production }}
+          environment: ${{ env.deployed_env }}
           version: ${{ needs.test.outputs.version }}
