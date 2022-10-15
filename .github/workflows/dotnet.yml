@@ -61,7 +61,7 @@ jobs:
 
 
   deploy-test:
-    needs: [can-i-deploy-test]
+    needs: [test, can-i-deploy-test]
     runs-on: ubuntu-latest
     env:
       deployed_env: test
@@ -87,7 +87,7 @@ jobs:
 
 
   deploy-production:
-    needs: [can-i-deploy-production]
+    needs: [test, can-i-deploy-production]
     runs-on: ubuntu-latest
     env:
       deployed_env: production
