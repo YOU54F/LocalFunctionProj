@@ -1,11 +1,16 @@
 name: .NET
 
 on:
+  workflow_dispatch:
   push:
-    branches: ['main']
+    paths:
+      - 'LocalFunctionProj/**'
+      - './github/workflows/dotnet.yml'
   pull_request:
     branches: ['main']
-  workflow_dispatch:
+    paths:
+      - 'LocalFunctionProj/**'
+      - './github/workflows/dotnet.yml'
 
 env:
   oas_file: oas/openapi.yaml

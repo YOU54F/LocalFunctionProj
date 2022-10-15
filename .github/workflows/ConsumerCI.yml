@@ -1,16 +1,16 @@
 name: ConsumerCI
 
 on:
+  workflow_dispatch:
   push:
-    branches: ['main', 'frontend*']
     paths:
       - 'consumer-react/**'
+      - './github/workflows/ConsumerCI.yml'
   pull_request:
     branches: ['main']
     paths:
       - 'consumer-react/**'
-
-  workflow_dispatch:
+      - './github/workflows/ConsumerCI.yml'
 
 env:
   version: ${{ github.sha }}-consumer-react
@@ -63,6 +63,11 @@ jobs:
       deploy_target: test
     steps:
       - uses: actions/checkout@v2
+      - name: Build site
+        run: |
+          cd consumer-react
+          npm run install
+          npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
         with:
@@ -75,7 +80,6 @@ jobs:
           enable-pull-request-comment: false
           enable-commit-comment: true
           overwrites-pull-request-comment: true
-          netlify-config-path: ./netlify.toml
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -88,6 +92,7 @@ jobs:
   deploy-to-production:
     if: github.ref == 'refs/heads/main'
     needs: [can-i-deploy-to-production]
+    # needs: [can-i-deploy-to-production, deploy-to-test]
     runs-on: ubuntu-latest
     env:
       application_name: consumer-react
@@ -105,7 +110,6 @@ jobs:
           enable-pull-request-comment: false
           enable-commit-comment: true
           overwrites-pull-request-comment: true
-          netlify-config-path: ./netlify.toml
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
