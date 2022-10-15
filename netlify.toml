@@ -1,0 +1,4 @@
+[build]
+  base    = "consumer-react"
+  publish = "consumer-react/build"
+  command = "react-scripts build"
