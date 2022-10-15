@@ -1,5 +1,7 @@
 # action-wf-test
 
+https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-csharp?tabs=azure-cli%2Cin-process
+
 1. `func init LocalFunctionProj --dotnet`
 1. `cd LocalFunctionProj`
 1. `func new --name HttpExample --template "HTTP trigger" --authlevel "anonymous"`
