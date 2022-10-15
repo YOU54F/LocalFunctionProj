@@ -9,7 +9,7 @@ on:
 
 env:
   oas_file: oas/openapi.yaml
-  results_file: "LocalFunctionProjTest/Project\ Report.xml"
+  results_file: LocalFunctionProjTest/Project\ Report.xml
   application_name: SmartBearCoin-Payee-Provider
   PACT_BROKER_BASE_URL: https://saflow.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
