@@ -16,6 +16,8 @@ env:
   version: ${{ github.sha }}
   PACT_BROKER_BASE_URL: https://saflow.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+  application_name: consumer-react
+  application_folder: consumer-react
 
 jobs:
   test:
@@ -23,17 +25,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: cd consumer-react && npm ci
-      - run: cd consumer-react && npm test
+      - run: cd ${{ env.application_folder }} && npm ci
+      - run: cd ${{ env.application_folder }} && npm test
       - uses: pactflow/actions/publish-pact-files@v1.0.1
         env:
-          pactfiles: consumer-react/pacts
+          pactfiles: ${{ env.application_folder }}/pacts
 
   can-i-deploy-to-test:
     needs: [test]
     runs-on: ubuntu-latest
     env:
-      application_name: consumer-react
       deploy_target: test
     steps:
       - name: can-i-deploy ${{ env.application_name }} to ${{ env.deploy_target }}
@@ -45,7 +46,6 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     env:
-      application_name: consumer-react
       deploy_target: production
     steps:
       - name: can-i-deploy ${{ env.application_name }} to ${{ env.deploy_target }}
@@ -58,20 +58,19 @@ jobs:
     needs: [can-i-deploy-to-test]
     runs-on: ubuntu-latest
     env:
-      application_name: consumer-react
       deploy_target: test
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Build site
         run: |
-          cd consumer-react
+          cd ${{ env.application_folder }}
           npm ci
           npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
         with:
-          publish-dir: './consumer-react/build'
+          publish-dir: './${{ env.application_folder }}/build'
           alias: ${{ env.deploy_target }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy from GitHub Actions'
@@ -92,20 +91,19 @@ jobs:
     needs: [can-i-deploy-to-production, deploy-to-test]
     runs-on: ubuntu-latest
     env:
-      application_name: consumer-react
       deploy_target: production
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Build site
         run: |
-          cd consumer-react
+          cd ${{ env.application_folder }}
           npm ci
           npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
         with:
-          publish-dir: './consumer-react/build'
+          publish-dir: './${{ env.application_folder }}/build'
           production-branch: main
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
