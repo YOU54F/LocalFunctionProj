@@ -63,6 +63,7 @@ jobs:
       deploy_target: test
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
       - name: Build site
         run: |
           cd consumer-react
@@ -99,6 +100,12 @@ jobs:
       deploy_target: production
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+      - name: Build site
+        run: |
+          cd consumer-react
+          npm run install
+          npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
         with:
