@@ -67,7 +67,7 @@ jobs:
       - name: Build site
         run: |
           cd consumer-react
-          npm run install
+          npm ci
           npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
@@ -104,7 +104,7 @@ jobs:
       - name: Build site
         run: |
           cd consumer-react
-          npm run install
+          npm ci
           npm run build
       - name: Deploy website to ${{ env.deploy_target }} environment
         uses: nwtgck/actions-netlify@v1.2
