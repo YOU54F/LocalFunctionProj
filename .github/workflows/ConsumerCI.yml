@@ -86,7 +86,7 @@ jobs:
 
   deploy-to-production:
     if: github.ref == 'refs/heads/main'
-    needs: [can-i-deploy-to-production]
+    needs: [can-i-deploy-to-production, deploy-to-test]
     runs-on: ubuntu-latest
     env:
       application_name: consumer-react
