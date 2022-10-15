@@ -34,9 +34,9 @@ jobs:
     - name: get version of OAS
       run: |
         sudo snap install yq && 
-        OAS_VERSION=$(yq '.info.version' server-stub/api/openapi.yaml)
+        OAS_VERSION=$(yq '.info.version' oas/openapi.yaml)
         echo "OAS_VERSION=${OAS_VERSION}" >> $GITHUB_ENV 
-        UNIQUE_VERSION=${OAS_VERSION}-${{ github.sha }}-server-stub
+        UNIQUE_VERSION=${OAS_VERSION}-${{ github.sha }}-service
         echo "version=${UNIQUE_VERSION}" >> $GITHUB_ENV
     - uses: pactflow/actions/publish-provider-contract@v1.0.0
       if: success()
