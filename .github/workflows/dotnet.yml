@@ -71,6 +71,7 @@ jobs:
         uses: pactflow/actions/record-deployment@v1.0.1
         env:
           environment: ${{ env.deployed_env }}
+          version: ${{ needs.test.outputs.version }}
           
   can-i-deploy-production:
     needs: [test, can-i-deploy-test, deploy-test]
@@ -96,3 +97,4 @@ jobs:
         uses: pactflow/actions/record-deployment@v1.0.1
         env:
           environment: ${{ env.production }}
+          version: ${{ needs.test.outputs.version }}
