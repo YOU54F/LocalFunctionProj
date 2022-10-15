@@ -13,16 +13,15 @@ on:
       - '.github/workflows/ConsumerCI.yml'
 
 env:
-  version: ${{ github.sha }}-consumer-react
+  version: ${{ github.sha }}
   PACT_BROKER_BASE_URL: https://saflow.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-  environment: test
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: cd consumer-react && npm ci
       - run: cd consumer-react && npm test
@@ -62,7 +61,7 @@ jobs:
       application_name: consumer-react
       deploy_target: test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Build site
         run: |
@@ -90,14 +89,13 @@ jobs:
 
   deploy-to-production:
     if: github.ref == 'refs/heads/main'
-    needs: [can-i-deploy-to-production]
-    # needs: [can-i-deploy-to-production, deploy-to-test]
+    needs: [can-i-deploy-to-production, deploy-to-test]
     runs-on: ubuntu-latest
     env:
       application_name: consumer-react
       deploy_target: production
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - name: Build site
         run: |
