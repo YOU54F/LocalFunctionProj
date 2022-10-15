@@ -29,4 +29,4 @@ rc=$?
 
 stop_server
 
-exit rc
+exit $rc
