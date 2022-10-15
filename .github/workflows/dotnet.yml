@@ -24,3 +24,5 @@ jobs:
         sudo apt-get install azure-functions-core-tools-4
     - name: Test
       run: ./startServerAndTest.sh
+      env:
+        SLM_API_KEY: ${{ secrets.SLM_API_KEY }}
