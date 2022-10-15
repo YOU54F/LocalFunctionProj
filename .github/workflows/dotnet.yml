@@ -23,6 +23,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install azure-functions-core-tools-4
     - name: Test
-      run: ./startServerAndTest.sh
+      run: chmod ugo+rwx LocalFunctionProjTest && ./startServerAndTest.sh
       env:
         SLM_API_KEY: ${{ secrets.SLM_API_KEY }}
