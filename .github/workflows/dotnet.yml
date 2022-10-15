@@ -7,11 +7,16 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  oas_file: oas/openapi.yaml
+  results_file: LocalFunctionProjTest/Project Report.xml
+  application_name: SmartBearCoin-Payee-Provider
+  PACT_BROKER_BASE_URL: https://saflow.pactflow.io
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+  
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -25,4 +30,69 @@ jobs:
     - name: Test
       run: chmod ugo+rwx LocalFunctionProjTest && ./startServerAndTest.sh
       env:
-        SLM_API_KEY: ${{ secrets.SLM_API_KEY }}
+        SLM_API_KEY: ${{ secrets.SLM_API_KEY }}      
+    - name: get version of OAS
+      run: |
+        sudo snap install yq && 
+        OAS_VERSION=$(yq '.info.version' server-stub/api/openapi.yaml)
+        echo "OAS_VERSION=${OAS_VERSION}" >> $GITHUB_ENV 
+        UNIQUE_VERSION=${OAS_VERSION}-${{ github.sha }}-server-stub
+        echo "version=${UNIQUE_VERSION}" >> $GITHUB_ENV
+    - uses: pactflow/actions/publish-provider-contract@v1.0.0
+      if: success()
+    - uses: pactflow/actions/publish-provider-contract@v1.0.0
+      if: failure()
+      env:
+        EXIT_CODE: 1
+    outputs:
+      version: ${{ env.version }}
+          
+  can-i-deploy-test:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      deploy_target: test
+    steps:
+      - name: can-i-deploy ${{ env.application_name }} to ${{ env.deploy_target }}
+        uses: pactflow/actions/can-i-deploy@v1.0.1
+        env:
+          to_environment: ${{ env.deploy_target }}
+          version: ${{ needs.test.outputs.version }}
+
+
+  deploy-test:
+    needs: [can-i-deploy-test]
+    runs-on: ubuntu-latest
+    env:
+      deployed_env: test
+    steps:
+      - name: record-deployment ${{ env.application_name }} to ${{ env.deployed_env }}
+        if: success() && github.ref == 'refs/heads/main'
+        uses: pactflow/actions/record-deployment@v1.0.1
+        env:
+          environment: ${{ env.deployed_env }}
+          
+  can-i-deploy-production:
+    needs: [test, can-i-deploy-test, deploy-test]
+    runs-on: ubuntu-latest
+    env:
+      deploy_target: production
+    steps:
+      - name: can-i-deploy ${{ env.application_name }} to ${{ env.deploy_target }}
+        uses: pactflow/actions/can-i-deploy@v1.0.1
+        env:
+          to_environment: ${{ env.deploy_target }}
+          version: ${{ needs.test.outputs.version }}
+
+
+  deploy-production:
+    needs: [can-i-deploy-production]
+    runs-on: ubuntu-latest
+    env:
+      deployed_env: production
+    steps:
+      - name: record-deployment ${{ env.application_name }} to ${{ env.production }}
+        if: success() && github.ref == 'refs/heads/main'
+        uses: pactflow/actions/record-deployment@v1.0.1
+        env:
+          environment: ${{ env.production }}
