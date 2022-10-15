@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SERVER_DIR=${SERVER_DIR:-'LocalFunctionProj'}
-SERVER_COMMAND=${SERVER_COMMAND:-'func start'}
+SERVER_COMMAND=${SERVER_COMMAND:-'func start --csharp'}
 WAIT_FOR=http://localhost:7071
 
 BASE_DIR=$PWD
